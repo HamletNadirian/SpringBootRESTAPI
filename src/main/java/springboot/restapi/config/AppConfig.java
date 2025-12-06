@@ -43,7 +43,7 @@ public class AppConfig {
                 .info(new Info()
                         .title("Movie REST API")
                         .version("1.0.0")
-                        .description("API для управления фильмами и продюсерами")
+                        .description("API for managing films and producers")
                         .contact(new Contact()
                                 .name("Hamlet Nadirian")
                                 .email("hamlet.nadirian@gmail.com")

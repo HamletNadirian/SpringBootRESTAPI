@@ -60,7 +60,7 @@ class MovieControllerIntegrationTest {
     @DisplayName("2. POST /api/producers - Duplicate Name (Should Fail)")
     void testCreateProducerDuplicateName() throws Exception {
         String json = """
-                {"name":"Test Studio","country":"USA"}
+                {"name":"Test Studio 2","country":"USA"}
                 """;
 
         mockMvc.perform(post("/api/producers")
@@ -413,7 +413,7 @@ class MovieControllerIntegrationTest {
 
         assert csvContent.contains("ID");
         assert csvContent.contains("Title");
-        assert csvContent.contains("Release Year");
+        assert csvContent.contains("Release Date");
 
     }
 

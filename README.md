@@ -91,3 +91,5 @@ Structure: The JSON is an array of objects, each representing either a producer 
        ]
 }
 ```
+## Integration Tests
+Tests for all endpoints are located in Spring Boot and REST API\src\test\java\springboot\restapi\MovieControllerIntegrationTest.java.
