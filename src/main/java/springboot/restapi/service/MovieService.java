@@ -14,6 +14,7 @@ import springboot.restapi.dto.movie.*;
 import springboot.restapi.dto.producer.ProducerDto;
 import springboot.restapi.repository.MovieRepository;
 import springboot.restapi.repository.ProducerRepository;
+import springboot.restapi.service.NotificationService;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 public class MovieService {
     private final MovieRepository movieRepository;
     private final ProducerRepository producerRepository;
+    private final NotificationService notificationService;
 
     @Transactional
     public MovieDetailDto createMovie(MovieCreateDto dto) {
@@ -40,6 +42,7 @@ public class MovieService {
         movie.setCreatedAt(dto.getCreatedAt());
 
         Movie saved = movieRepository.save(movie);
+        notificationService.sendMovieCreatedNotification(saved);
         return toDetailDto(saved);
     }
 
@@ -73,10 +76,14 @@ public class MovieService {
 
     @Transactional
     public void deleteMovie(Long id) {
-        if (!movieRepository.existsById(id)) {
-            throw new EntityNotFoundException("Movie not found: " + id);
-        }
+        Movie movie = movieRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Movie not found: " + id));
+
+        String movieTitle = movie.getTitle();
+
         movieRepository.deleteById(id);
+
+        notificationService.sendMovieDeletedNotification(id, movieTitle);
     }
 
     public List<Movie> getAllMovies() {

@@ -20,6 +20,7 @@ public class ProducerService {
     public List<Producer> getAllProducers() {
         return producerRepository.findAll();
     }
+    private final NotificationService notificationService;
 
     @Transactional
     public ProducerDto createProducer(ProducerRequestDto requestDto) {
@@ -31,6 +32,9 @@ public class ProducerService {
         producer.setName(requestDto.getName());
         producer.setCountry(requestDto.getCountry());
         Producer saved = producerRepository.save(producer);
+
+        notificationService.sendProducerCreatedNotification(saved);
+
         return convertToDto(saved);
     }
 
@@ -51,13 +55,17 @@ public class ProducerService {
 
     @Transactional
     public void deleteProducer(Long id) {
-        if (!producerRepository.existsById(id)) {
-            throw new EntityNotFoundException(
-                    "Producer not found with id: " + id
-            );
-        }
+
+        Producer producer = producerRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Producer not found with id: " + id
+                ));
+        String producerName = producer.getName();
+
         try {
             producerRepository.deleteById(id);
+            notificationService.sendProducerDeletedNotification(id, producerName);
+
         } catch (Exception e) {
             throw new IllegalStateException(
                     "Cannot delete producer because it has associated movies.", e
